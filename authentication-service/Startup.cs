@@ -41,6 +41,18 @@ namespace authentication_service
                     ValidateAudience = false
                 };
             });
+
+            services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v2", new Microsoft.OpenApi.Models.OpenApiInfo
+                {
+                    Title = "Jwt Authentication Service",
+                    Version = "v2",
+                    Description = "Jwt Authentication Service",
+                });
+            });
+
+            services.AddHealthChecks();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -62,6 +74,13 @@ namespace authentication_service
             {
                 endpoints.MapControllers();
             });
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapHealthChecks("/health");
+            });
+            app.UseSwagger();
+            app.UseSwaggerUI(options => options.SwaggerEndpoint("/swagger/v2/swagger.json", "PlaceInfo Services"));
         }
     }
 }
