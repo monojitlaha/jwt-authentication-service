@@ -1,7 +1,9 @@
-﻿namespace authentication_service.AuthManager
+﻿using authentication_service.Model;
+
+namespace authentication_service.AuthManager
 {
     public interface IJwtAuthenticationManager
     {
-        string Authenticate(string userName, string password);
+        Response Authenticate(string userName, string password);
     }
 }
