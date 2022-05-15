@@ -13,7 +13,7 @@ namespace authentication_service.AuthManager
         private readonly string _key;
         private IDictionary<string, string> users = new Dictionary<string, string>
         {
-            { "test1", "password1" }, { "test2", "password2" }
+            { "monojit", "password1" }, { "swadhin", "password2" }
         };
 
         public JwtAuthenticationManager(string key)
