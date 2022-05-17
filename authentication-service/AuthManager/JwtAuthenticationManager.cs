@@ -1,29 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using authentication_service.Model;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 
 namespace authentication_service.AuthManager
 {
     public class JwtAuthenticationManager : IJwtAuthenticationManager
     {
         private readonly string _key;
-        private IDictionary<string, string> users = new Dictionary<string, string>
-        {
-            { "monojit", "password1" }, { "swadhin", "password2" }
-        };
+        private List<UserData> users = null;
 
         public JwtAuthenticationManager(string key)
         {
             _key = key;
+            LoadJsonData();
         }
 
-        public string Authenticate(string username, string password)
+        private void LoadJsonData()
         {
-            if (!users.Any(u => u.Key == username && u.Value == password))
+            using StreamReader r = new StreamReader("userdata.json");
+            string json = r.ReadToEnd();
+            users = JsonConvert.DeserializeObject<List<UserData>>(json);
+        }
+
+        public Response Authenticate(string username, string password)
+        {
+            var user = users.Where(u => u.Username == username && u.Password == password).FirstOrDefault();
+            if (user == null)
                 return null;
 
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -38,7 +47,11 @@ namespace authentication_service.AuthManager
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(tokenKey), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
+            return new Response
+            {
+                Token = tokenHandler.WriteToken(token),
+                Role = user.Role
+            };
         }
     }
 }
