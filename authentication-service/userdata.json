@@ -1,8 +1,13 @@
 [
     {
+        "username": "admin",
+        "password": "admin",
+        "role": "admin"
+    },
+    {
         "username": "monojit",
         "password": "password1",
-        "role": "admin"
+        "role": "fse"
     },
     {
         "username": "swadhin",
